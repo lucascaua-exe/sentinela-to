@@ -1,0 +1,20 @@
+[Unit]
+Description=Sentinela TO - simulador do medidor IoT
+After=sentinela-api.service
+Requires=sentinela-api.service
+
+[Service]
+User=sentinela
+Group=sentinela
+WorkingDirectory=/opt/sentinela-to
+EnvironmentFile=/etc/sentinela-to.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/sentinela-to/.venv/bin/python simulator/iot_emulator.py --url http://127.0.0.1:8090/api/telemetry
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

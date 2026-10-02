@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F8FAFC" />
+    <title>Entrar · Sentinela TO</title>
+    <link rel="icon" href="/devkit/logo_sem_fundo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="login-page">
+      <form class="login-card" id="login-form" novalidate>
+        <div class="login-brand">
+          <span class="login-mark" role="img" aria-label="Logo Sentinela TO"></span>
+          <span class="brand-name login-wordmark">Sentinela<strong>TO</strong></span>
+        </div>
+
+        <div class="login-heading">
+          <h1>Acesso ao painel</h1>
+          <p>Entre com seu usuário e senha.</p>
+        </div>
+
+        <label class="field">
+          <span>Usuário</span>
+          <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus />
+        </label>
+
+        <label class="field">
+          <span>Senha</span>
+          <span class="password-wrap">
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+            <button type="button" class="password-toggle" id="toggle-password" aria-label="Mostrar senha">Mostrar</button>
+          </span>
+        </label>
+
+        <p class="login-error" id="login-error" role="alert"></p>
+
+        <button type="submit" class="btn-primary" id="submit">Entrar</button>
+      </form>
+    </main>
+
+    <script>
+      const form = document.getElementById("login-form");
+      const error = document.getElementById("login-error");
+      const submit = document.getElementById("submit");
+      const password = document.getElementById("password");
+      const toggle = document.getElementById("toggle-password");
+
+      toggle.addEventListener("click", () => {
+        const show = password.type === "password";
+        password.type = show ? "text" : "password";
+        toggle.textContent = show ? "Ocultar" : "Mostrar";
+        toggle.setAttribute("aria-label", show ? "Ocultar senha" : "Mostrar senha");
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const username = form.username.value.trim();
+        if (!username || !password.value) {
+          error.textContent = "Informe usuário e senha.";
+          return;
+        }
+        error.textContent = "";
+        submit.disabled = true;
+        submit.textContent = "Entrando…";
+        try {
+          const resp = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password: password.value }),
+          });
+          if (resp.ok) {
+            location.replace("/");
+            return;
+          }
+          const body = await resp.json().catch(() => ({}));
+          error.textContent = typeof body.detail === "string" ? body.detail : "Não foi possível entrar.";
+          password.select();
+        } catch {
+          error.textContent = "Servidor indisponível. Tente novamente.";
+        }
+        submit.disabled = false;
+        submit.textContent = "Entrar";
+      });
+    </script>
+  </body>
+</html>

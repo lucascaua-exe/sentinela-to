@@ -1,0 +1,23 @@
+# Ambiente Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Dados locais: banco (usuários e senhas), token do dispositivo e históricos
+data/
+*.db
+*.db-journal
+*.token
+.env
+*.env
+
+# Documentos pessoais do kit (fora do repositório público)
+devkit/*.pdf
+
+# Editor e sistema
+.vscode/
+.idea/
+.cursor/
+Thumbs.db
+.DS_Store
